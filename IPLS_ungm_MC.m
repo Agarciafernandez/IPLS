@@ -13,16 +13,15 @@ rand('seed',9)
 
 Scenario_ungm_trajectories;
 
-%Parametros sigma points
+%Parameters of the sigma-point method (unscented transform)
 Nx=1; %Dimension of the state
 W0=1/3; %Weight of sigma-point at the mean
 Nz=1; %Dimension of the measurement
 
 Wn=(1-W0)/(2*Nx);
-weights=[W0,Wn*ones(1,2*Nx)]; %Sigma-points weights (according to UKF)
+weights=[W0,Wn*ones(1,2*Nx)]; %Sigma-points weights (according to the unscented transform)
 square_error_t_tot=zeros(1,Nsteps);
 
-ruido_mean_ini=randn(1,Nmc);
 
 nees_t_tot=zeros(1,Nsteps);
 rms_t_series=zeros(1,Nmc);
@@ -36,7 +35,7 @@ Nit_s=10;
 Nit_iplf=1; %Number of iterations in filtering (Nit_iplf=1 is similar to the UKF)
 
 square_error_t_tot_smoothing_series=zeros(Nmc,Nsteps,Nit_s+1); %For filtering and the N_it_s iterations
-NLL_smoothing_series=zeros(Nmc,Nsteps,Nit_s+1); %Negative log-likelihood (See Deisenroth_thesis)
+NLL_smoothing_series=zeros(Nmc,Nsteps,Nit_s+1); %Negative log-likelihood (See Marc Deisenroth PhD thesis)
 Nees_smoothing_series=zeros(Nmc,Nsteps,Nit_s+1); %NEES
 cte_NLL=Nx/2*log(2*pi); %Constant for NLL
 
@@ -90,7 +89,7 @@ for i=1:Nmc
         
     end
     
-    %UKF
+    %Filtering
     
     for k=1:Nsteps
         pos_x=X_multi(1,k);
@@ -104,11 +103,12 @@ for i=1:Nmc
         
         for p=1:Nit_iplf
             
-            %SLR of function a*x^3
+            %SLR of function a*x^3 w.r.t. current approximation of the
+            %posterior, with mean meank_j and covariance Pk_j
             [A_l,b_l,Omega_l]=SLR_measurement_ax3(meank_j,Pk_j,a,weights,W0,Nx,Nz);
             
             
-            %KF update
+            %KF update for the linearised model
             [mean_ukf_act,var_ukf_act]=linear_kf_update(meank,Pk,A_l,b_l,Omega_l,R,z_real);
             
             meank_j=mean_ukf_act;
@@ -153,7 +153,7 @@ for i=1:Nmc
     end
     
     
-    %Smoother
+    %Smoothing
     [meank_smoothed_t,Pk_smoothed_t]=linear_rts_smoother(meank_t,Pk_t,A_dyn,b_dyn,Omega_dyn,Q);
     
     for k=1:Nsteps
@@ -172,7 +172,7 @@ for i=1:Nmc
             meank=meank_smoothed_t(:,k);
             Pk=Pk_smoothed_t(:,:,k);
             
-            %SLR for measurement
+            %SLR for the measurement
             [A_l,b_l,Omega_l]=SLR_measurement_ax3(meank,Pk,a,weights,W0,Nx,Nz);
             
             
@@ -180,7 +180,7 @@ for i=1:Nmc
             b_m(:,k)=b_l;
             Omega_m(:,:,k)=Omega_l;
             
-            %SLR for dynamics
+            %SLR for the dynamics
             [A_dyn_k,b_dyn_k,Omega_dyn_k]=SLR_ungm_dynamic(meank,Pk,alfa_mod,beta_mod,gamma_mod,weights,W0,Nx,k);
             
             A_dyn(:,:,k)=A_dyn_k;
