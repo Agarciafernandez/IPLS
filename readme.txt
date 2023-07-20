@@ -1,13 +1,10 @@
-This repository contains the Matlab implementation of the iterated posterior linearisation smoother (IPLS) [1], 
-which is based on the posterior linearisation technique for Gaussian inference [2].
+This repository contains the Matlab implementations of the iterated posterior linearisation smoother (IPLS) [1] and the L-scan iterated posterior linearisation filter (L-scan IPLF) [1, Sec. III.D]).
+Both algorithms are based on the posterior linearisation technique for Gaussian inference [2].
 The extension of the IPLS for dynamic/measurement models based on conditional moments can be found in [3].
 
 
-
-
-To run the IPLS algorithm, run the file
-
-IPLS_ungm_MC.m
+To run the IPLS algorithm, run the file IPLS_ungm_MC.m
+To run the L-scan IPLF algorithm, run the file L_scan_IPLF_ungm_MC.m
 
  
 [1] Á. F. García-Fernández, L. Svensson and S. Särkkä, "Iterated Posterior Linearization Smoother," in IEEE Transactions on Automatic Control, vol. 62, no. 4, pp. 2056-2063, April 2017.

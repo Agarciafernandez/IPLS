@@ -128,7 +128,6 @@ for i=1:Nmc
         square_error_t(k)=(mean_ukf_act-pos_x)^2;
         pos_error=mean_ukf_act-pos_x;
         var_pos_act=var_ukf_act(1);
-        %nees_t(k)=state_error'*inv(var_mp_tukf_act)*state_error;
         nees_t(k)=pos_error'/var_pos_act*pos_error;
 
         square_error_t_tot_smoothing_series(i,k,1)=square_error_t(k);
