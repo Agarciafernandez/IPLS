@@ -7,6 +7,8 @@
 %First, statistical linear regression (SLR) using IPLF, then smoother and then iterated
 %SLRs, with filtering and smoothing
 
+%Author: Ángel F. García-Fernández
+
 clear
 randn('seed',9)
 rand('seed',9)

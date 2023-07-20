@@ -8,6 +8,9 @@
 %is to re-linearise dynamic and measurement functions in a sliding window of
 %the past L time steps to improve filtering performance.
 
+%Author: Ángel F. García-Fernández
+
+
 clear
 randn('seed',9)
 rand('seed',9)
